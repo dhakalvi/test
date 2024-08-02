@@ -41,7 +41,8 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Login</button>
             </form>
-        </div>
+        </div> </div>
+<div class="container">
         <div id="logout-section" class="login-form bg-light hidden">
             <h2 class="text-center">Welcome, <span id="user-name"></span></h2>
             <button class="btn btn-danger btn-block" onclick="logout()">Logout</button>
@@ -50,76 +51,7 @@
 
     <script>
         // Function to fetch user data from user.json
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch('user.json'); // Ensure the correct path
-                const data = await response.json();
-                return data;
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-                return [];
-            }
-        };
-
-        const initializeApp = async () => {
-            const users = await fetchUserData();
-
-            function showAlert(message, type) {
-                const alertContainer = document.getElementById('alert-container');
-                const alertDiv = document.createElement('div');
-                alertDiv.className = `alert alert-${type}`;
-                alertDiv.innerHTML = `<i class="${type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'}"></i> ${message}`;
-                alertContainer.appendChild(alertDiv);
-                setTimeout(() => alertDiv.remove(), 3000);
-            }
-
-            function login() {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                const user = users.find(user => user.username === username && user.password === password);
-
-                if (user) {
-                    showAlert('Successfully logged in!', 'success');
-                    document.getElementById('login-form').classList.replace('visible', 'hidden');
-                    document.getElementById('logout-section').classList.replace('hidden', 'visible');
-                    document.getElementById('user-name').textContent = user.name;
-                    sessionStorage.setItem('loggedIn', true);
-                } else {
-                    showAlert('Invalid username or password!', 'danger');
-                }
-            }
-
-            function logout() {
-                document.getElementById('login-form').classList.replace('hidden', 'visible');
-                document.getElementById('logout-section').classList.replace('visible', 'hidden');
-                document.getElementById('username').value = '';
-                document.getElementById('password').value = '';
-                sessionStorage.removeItem('loggedIn');
-            }
-
-            // Check if user is already logged in
-            if (sessionStorage.getItem('loggedIn')) {
-                document.getElementById('login-form').classList.replace('visible', 'hidden');
-                document.getElementById('logout-section').classList.replace('hidden', 'visible');
-            }
-
-            // Attach functions to global scope (for use in HTML)
-            window.login = login;
-            window.logout = logout;
-        };
-
-        // Initialize the app
-        initializeApp();
-
-        // Protect Code
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i' || e.key === 'j')) {
-                e.preventDefault();
-            }
-        });
+        function _0x29f5(){const _0xfea459=['user.json','ctrlKey','textContent','Invalid\x20username\x20or\x20password!','innerHTML','Successfully\x20logged\x20in!','className','username','9969dlRXCq','classList','loggedIn','visible','Error\x20fetching\x20user\x20data:','preventDefault','125830OQVomj','fas\x20fa-exclamation-circle','734pnXOUF','contextmenu','login','createElement','replace','hidden','appendChild','key','4207889xiWKrn','12zYWzRp','getElementById','password','logout','danger','alert-container','2045750LPjznb','login-form','logout-section','success','88vWdDXg','div','409437BEbtEQ','961196vYBVLJ','7338784qcoery','remove','getItem','value','alert\x20alert-','user-name','error'];_0x29f5=function(){return _0xfea459;};return _0x29f5();}const _0x48415c=_0x17e6;(function(_0x213c45,_0x3b8265){const _0x420e03=_0x17e6,_0x5b586a=_0x213c45();while(!![]){try{const _0x21aa9b=parseInt(_0x420e03(0x9e))/0x1+parseInt(_0x420e03(0xb6))/0x2*(parseInt(_0x420e03(0xae))/0x3)+parseInt(_0x420e03(0xc9))/0x4*(parseInt(_0x420e03(0xb4))/0x5)+parseInt(_0x420e03(0xbf))/0x6*(-parseInt(_0x420e03(0xbe))/0x7)+-parseInt(_0x420e03(0x9f))/0x8+-parseInt(_0x420e03(0xcb))/0x9+parseInt(_0x420e03(0xc5))/0xa;if(_0x21aa9b===_0x3b8265)break;else _0x5b586a['push'](_0x5b586a['shift']());}catch(_0x568b6c){_0x5b586a['push'](_0x5b586a['shift']());}}}(_0x29f5,0xbceed));const fetchUserData=async()=>{const _0x5bbcd7=_0x17e6;try{const _0x380bd8=await fetch(_0x5bbcd7(0xa6)),_0x335ef=await _0x380bd8['json']();return _0x335ef;}catch(_0x4158d8){return console[_0x5bbcd7(0xa5)](_0x5bbcd7(0xb2),_0x4158d8),[];}},initializeApp=async()=>{const _0xf5ce33=_0x17e6,_0x5010f3=await fetchUserData();function _0x960d82(_0x1cd69b,_0x516daf){const _0x5de02c=_0x17e6,_0x266f43=document[_0x5de02c(0xc0)](_0x5de02c(0xc4)),_0x18c4dc=document[_0x5de02c(0xb9)](_0x5de02c(0xca));_0x18c4dc[_0x5de02c(0xac)]=_0x5de02c(0xa3)+_0x516daf,_0x18c4dc[_0x5de02c(0xaa)]='<i\x20class=\x22'+(_0x516daf===_0x5de02c(0xc8)?'fas\x20fa-check-circle':_0x5de02c(0xb5))+'\x22></i>\x20'+_0x1cd69b,_0x266f43[_0x5de02c(0xbc)](_0x18c4dc),setTimeout(()=>_0x18c4dc[_0x5de02c(0xa0)](),0xbb8);}function _0x21862f(){const _0xfe2259=_0x17e6,_0x2bd599=document[_0xfe2259(0xc0)](_0xfe2259(0xad))[_0xfe2259(0xa2)],_0x313466=document[_0xfe2259(0xc0)](_0xfe2259(0xc1))[_0xfe2259(0xa2)],_0x20f22d=_0x5010f3['find'](_0x6841af=>_0x6841af['username']===_0x2bd599&&_0x6841af[_0xfe2259(0xc1)]===_0x313466);_0x20f22d?(_0x960d82(_0xfe2259(0xab),'success'),document[_0xfe2259(0xc0)]('login-form')[_0xfe2259(0xaf)]['replace']('visible',_0xfe2259(0xbb)),document[_0xfe2259(0xc0)](_0xfe2259(0xc7))[_0xfe2259(0xaf)][_0xfe2259(0xba)](_0xfe2259(0xbb),_0xfe2259(0xb1)),document['getElementById'](_0xfe2259(0xa4))[_0xfe2259(0xa8)]=_0x20f22d['name'],sessionStorage['setItem'](_0xfe2259(0xb0),!![])):_0x960d82(_0xfe2259(0xa9),_0xfe2259(0xc3));}function _0x24427d(){const _0xe89e75=_0x17e6;document[_0xe89e75(0xc0)](_0xe89e75(0xc6))[_0xe89e75(0xaf)][_0xe89e75(0xba)](_0xe89e75(0xbb),'visible'),document[_0xe89e75(0xc0)](_0xe89e75(0xc7))['classList']['replace'](_0xe89e75(0xb1),_0xe89e75(0xbb)),document['getElementById'](_0xe89e75(0xad))[_0xe89e75(0xa2)]='',document[_0xe89e75(0xc0)](_0xe89e75(0xc1))['value']='',sessionStorage['removeItem'](_0xe89e75(0xb0));}sessionStorage[_0xf5ce33(0xa1)](_0xf5ce33(0xb0))&&(document['getElementById']('login-form')['classList'][_0xf5ce33(0xba)]('visible',_0xf5ce33(0xbb)),document[_0xf5ce33(0xc0)](_0xf5ce33(0xc7))['classList'][_0xf5ce33(0xba)](_0xf5ce33(0xbb),'visible')),window[_0xf5ce33(0xb8)]=_0x21862f,window[_0xf5ce33(0xc2)]=_0x24427d;};function _0x17e6(_0x2821b6,_0x1b4edd){const _0x29f52c=_0x29f5();return _0x17e6=function(_0x17e6d4,_0xdc404f){_0x17e6d4=_0x17e6d4-0x9e;let _0x17832d=_0x29f52c[_0x17e6d4];return _0x17832d;},_0x17e6(_0x2821b6,_0x1b4edd);}initializeApp(),document['addEventListener'](_0x48415c(0xb7),function(_0x1a137c){_0x1a137c['preventDefault']();}),document['addEventListener']('keydown',function(_0x585e6d){const _0x3d0ddc=_0x48415c;_0x585e6d[_0x3d0ddc(0xa7)]&&(_0x585e6d['key']==='u'||_0x585e6d[_0x3d0ddc(0xbd)]==='s'||_0x585e6d[_0x3d0ddc(0xbd)]==='i'||_0x585e6d[_0x3d0ddc(0xbd)]==='j')&&_0x585e6d[_0x3d0ddc(0xb3)]();});
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
