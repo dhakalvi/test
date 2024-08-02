@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OJT Registration Form</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            margin-top: 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .form-card {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #f8f9fa;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container form-container">
+        <div id="alert-container" class="w-100"></div>
+        <div class="form-card">
+            <h2 class="text-center">OJT Registration Form</h2>
+            <form id="registration-form" onsubmit="event.preventDefault(); saveFormData();">
+                <div class="form-group">
+                    <label for="registrationNo">Registration No.</label>
+                    <input type="text" class="form-control" id="registrationNo" required>
+                </div>
+                <div class="form-group">
+                    <label for="symbolNo">Symbol No.</label>
+                    <input type="text" class="form-control" id="symbolNo" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="class">Class</label>
+                    <input type="text" class="form-control" id="class" required>
+                </div>
+                <div class="form-group">
+                    <label for="passed">Passed</label>
+                    <input type="text" class="form-control" id="passed" required>
+                </div>
+                <div class="form-group">
+                    <label for="start">Start</label>
+                    <input type="date" class="form-control" id="start" required>
+                </div>
+                <div class="form-group">
+                    <label for="end">End</label>
+                    <input type="date" class="form-control" id="end" required>
+                </div>
+                <div class="form-group">
+                    <label for="duration">Duration</label>
+                    <select class="form-control" id="duration" required>
+                        <option value="Absent">Absent</option>
+                        <option value="1 Month">1 Month</option>
+                        <option value="2 Months">2 Months</option>
+                        <option value="3 Months">3 Months</option>
+                        <option value="4 Months">4 Months</option>
+                        <option value="5 Months">5 Months</option>
+                        <option value="6 Months">6 Months</option>
+                        <option value="7 Months">7 Months</option>
+                        <option value="8 Months">8 Months</option>
+                        <option value="9 Months">9 Months</option>
+                        <option value="10 Months">10 Months</option>
+                        <option value="11 Months">11 Months</option>
+                        <option value="12 Months">12 Months</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alert-container');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} mt-3`;
+            alertDiv.innerHTML = `<i class="${type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle'}"></i> ${message}`;
+            alertContainer.appendChild(alertDiv);
+            setTimeout(() => alertDiv.remove(), 3000);
+        }
+
+        async function saveFormData() {
+            const formData = {
+                registrationNo: document.getElementById('registrationNo').value,
+                symbolNo: document.getElementById('symbolNo').value,
+                name: document.getElementById('name').value,
+                class: document.getElementById('class').value,
+                passed: document.getElementById('passed').value,
+                start: document.getElementById('start').value,
+                end: document.getElementById('end').value,
+                duration: document.getElementById('duration').value,
+            };
+
+            try {
+                const response = await fetch('/save-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+
+                if (response.ok) {
+                    showAlert('Form data saved successfully!', 'success');
+                    document.getElementById('registration-form').reset();
+                } else {
+                    showAlert('Failed to save form data.', 'danger');
+                }
+            } catch (error) {
+                showAlert('Error saving form data: ' + error.message, 'danger');
+            }
+        }
+
+        // Protect Code
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i' || e.key === 'j')) {
+                e.preventDefault();
+            }
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
