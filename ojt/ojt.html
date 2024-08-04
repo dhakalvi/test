@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Google Sheets Data</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Student Data</h2>
+        <div class="mb-3">
+            <input type="text" id="studentName" class="form-control" placeholder="Enter Student Name to filter">
+            <button class="btn btn-primary mt-2" onclick="fetchAndFilterData()">Filter</button>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Registration Number</th>
+                    <th>Symbol Number</th>
+                    <th>Student Name</th>
+                    <th>Class</th>
+                    <th>Passed Year</th>
+                    <th>Starting Date</th>
+                    <th>Ending Date</th>
+                    <th>Duration</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="data-table">
+                <!-- Data will be appended here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Student Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <input type="hidden" id="editIndex">
+                        <div class="form-group">
+                            <label for="editTimestamp">Timestamp</label>
+                            <input type="text" class="form-control" id="editTimestamp" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="editRegistrationNumber">Registration Number</label>
+                            <input type="number" class="form-control" id="editRegistrationNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSymbolNumber">Symbol Number</label>
+                            <input type="number" class="form-control" id="editSymbolNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="editStudentName">Student Name</label>
+                            <input type="text" class="form-control" id="editStudentName">
+                        </div>
+                        <div class="form-group">
+                            <label for="editClass">Class</label>
+                            <input type="number" class="form-control" id="editClass">
+                        </div>
+                        <div class="form-group">
+                            <label for="editPassedYear">Passed Year</label>
+                            <input type="number" class="form-control" id="editPassedYear">
+                        </div>
+                        <div class="form-group">
+                            <label for="editStartingDate">Starting Date</label>
+                            <input type="text" class="form-control" id="editStartingDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="editEndingDate">Ending Date</label>
+                            <input type="text" class="form-control" id="editEndingDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="editDuration">Duration</label>
+                            <input type="text" class="form-control" id="editDuration">
+                        </div>
+                        <div class="form-group">
+                            <label for="editRemarks">Remarks</label>
+                            <input type="text" class="form-control" id="editRemarks">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEdit()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentData = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchAndFilterData();
+        });
+
+        function fetchAndFilterData() {
+            const studentName = document.getElementById('studentName').value.trim().toLowerCase();
+            
+            fetch('https://script.google.com/macros/s/AKfycbxR3z8AJsY8aYayYi6hG41uJas-Jgw1-zT5m9ZVvEn9A-M2QD5dO6YAjBPAjH_fqWsOvQ/exec')
+                .then(response => response.json())
+                .then(data => {
+                    currentData = data;
+                    let filteredData = data.filter(item => item["Student Name"].toLowerCase().includes(studentName));
+                    let tableBody = document.getElementById('data-table');
+                    tableBody.innerHTML = '';
+
+                    filteredData.forEach((item, index) => {
+                        let row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item["Timestamp"]}</td>
+                            <td>${item["Registration Number"]}</td>
+                            <td>${item["Symbol Number"]}</td>
+                            <td>${item["Student Name"]}</td>
+                            <td>${item["Class"]}</td>
+                            <td>${item["Passed Year"]}</td>
+                            <td>${item["Starting Date (YYYY/MM/DD)"]}</td>
+                            <td>${item["Ending Date (YYYY/MM/DD)"]}</td>
+                            <td>${item["Duration"]}</td>
+                            <td>${item["Remarks"]}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editRow(${index})">Edit</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteRow(${index})">Delete</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function editRow(index) {
+            let item = currentData[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('editTimestamp').value = item["Timestamp"];
+            document.getElementById('editRegistrationNumber').value = item["Registration Number"];
+            document.getElementById('editSymbolNumber').value = item["Symbol Number"];
+            document.getElementById('editStudentName').value = item["Student Name"];
+            document.getElementById('editClass').value = item["Class"];
+            document.getElementById('editPassedYear').value = item["Passed Year"];
+            document.getElementById('editStartingDate').value = item["Starting Date (YYYY/MM/DD)"].split('T')[0];
+            document.getElementById('editEndingDate').value = item["Ending Date (YYYY/MM/DD)"].split('T')[0];
+            document.getElementById('editDuration').value = item["Duration"];
+            document.getElementById('editRemarks').value = item["Remarks"];
+            $('#editModal').modal('show');
+        }
+
+        function saveEdit() {
+            let index = document.getElementById('editIndex').value;
+            let editedItem = {
+                "Timestamp": document.getElementById('editTimestamp').value,
+                "Registration Number": document.getElementById('editRegistrationNumber').value,
+                "Symbol Number": document.getElementById('editSymbolNumber').value,
+                "Student Name": document.getElementById('editStudentName').value,
+                "Class": document.getElementById('editClass').value,
+                "Passed Year": document.getElementById('editPassedYear').value,
+                "Starting Date (YYYY/MM/DD)": new Date(document.getElementById('editStartingDate').value).toISOString(),
+                "Ending Date (YYYY/MM/DD)": new Date(document.getElementById('editEndingDate').value).toISOString(),
+                "Duration": document.getElementById('editDuration').value,
+                "Remarks": document.getElementById('editRemarks').value,
+            };
+
+            // Save the edited data back to Google Sheets using Apps Script
+            fetch(`https://script.google.com/macros/s/AKfycbxR3z8AJsY8aYayYi6hG41uJas-Jgw1-zT5m9ZVvEn9A-M2QD5dO6YAjBPAjH_fqWsOvQ/exec?index=${index}`, {
+                method: 'POST',
+                body: JSON.stringify(editedItem),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.result === 'success') {
+                      $('#editModal').modal('hide');
+                      fetchAndFilterData();
+                  } else {
+                      alert('Failed to save data.');
+                  }
+              }).catch(error => {
+                  console.error('Error saving data:', error);
+                  alert('Failed to save data.');
+              });
+        }
+
+        function deleteRow(index) {
+            if (confirm('Are you sure you want to delete this row?')) {
+                fetch(`https://script.google.com/macros/s/AKfycbxR3z8AJsY8aYayYi6hG41uJas-Jgw1-zT5m9ZVvEn9A-M2QD5dO6YAjBPAjH_fqWsOvQ/exec?index=${index}`, {
+                    method: 'DELETE'
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.result === 'success') {
+                          fetchAndFilterData();
+                      } else {
+                          alert('Failed to delete data.');
+                      }
+                  }).catch(error => {
+                      console.error('Error deleting data:', error);
+                      alert('Failed to delete data.');
+                  });
+            }
+        }
+    </script>
+</body>
+</html>
