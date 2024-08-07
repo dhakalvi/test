@@ -20,7 +20,7 @@
         }
         .foot {
             font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-            font-size: 22px;
+            font-size: 16px;
             margin: 10px;
         }
         #foot {
@@ -45,7 +45,7 @@
             border: none;
             height: 35px;
             box-shadow: 5px 5px 5px 3px #aaaaaa;
-            background-color: blanchedalmond;
+            background-color: white;
             border-radius: 5px;
         }
         #sbox:hover {
@@ -56,8 +56,39 @@
         }
         .flex-container {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between; /* Adjusted for space between search and filter */
             padding: 10px;
+        }
+        @media print {
+            input {
+                visibility: hidden;
+            }
+            #foot {
+                visibility: hidden;
+            }
+            body {
+                background-color: white;
+            }
+            button {
+                visibility: hidden;
+            }
+        }
+        .btn {
+            margin-left: 20px;
+        }
+        #foot p {
+            height: 3px;
+        }
+        table {
+            margin: 10px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .page-number {
+            margin: 0 10px;
         }
     </style>
 </head>
@@ -68,12 +99,17 @@
         <h4 id="header">Class 10 and 12 OJT Records</h4>
     </div>
     <div id="search" class="flex-container">
+        <select id="rowFilter" onchange="filterRows()">
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="all">All</option>
+        </select>
         <input type="text" id="sbox" onkeyup="search()" placeholder="Name...">
     </div>
     <table id="data-table" class="table table-striped">
         <thead>
             <tr>
-                <th>Timestamp</th>
                 <th>Registration Number</th>
                 <th>Symbol Number</th>
                 <th>Student Name</th>
@@ -89,9 +125,15 @@
             <!-- Data rows will be inserted here -->
         </tbody>
     </table>
+    <div class="pagination">
+        <button class="btn btn-secondary" onclick="prevPage()">Previous</button>
+        <span class="page-number">Page <span id="current-page">1</span></span>
+        <button class="btn btn-secondary" onclick="nextPage()">Next</button>
+    </div>
+    <button class="btn btn-success" onclick="pdf()"><i class="fa fa-download"></i> Download</button>
     <footer id="foot">
         <div class="foot">
-            <p>Copyright © 2081 (2024) - All Rights Reserved - <a href="https://www.dedhgaunmavi.edu.np">Shree Dedhgaun Secondary School</a></p>
+            <p>Copyright © 2081 (2024) - All Rights Reserved - <a href="https://www.dedhgaunmavi.edu.np">SDSS</a></p>
             <p><i class="fa-solid fa-square-envelope"></i> <a href="mailto:dedhgaunmavi@gmail.com">dedhgaunmavi@gmail.com</a></p>
             <p><i class="fas fa-phone-square-alt"></i> <a href="tel:+9779846587401">9846587401</a></p>
             <p>Designed & Developed By <a href="https://www.shivanp.com.np"><img id="fimg" src="https://blogger.googleusercontent.com/img/a/AVvXsEhfAuj90QIslIgStNt2wCZ5gODTqRimRdFcz7Rk10kXHoD82bt4mdNJRc1F7GzY7x68Lr8DzMVZMnxuBfbX-ms4JGMDj1KucHN6rLPlTQxxn5oPaY9E0ITTC4B9lTY_bTGVwSBwxRQWY-1u796kHYkgT_k128E6CBo2xNdWFQ5xEA9xV8T1n4m6TYInrlPK=s1600" alt="Shiva Prasad Dhakal"> Shiva Prasad Dhakal</a></p>
@@ -99,34 +141,49 @@
     </footer>
     <script>
         // Function to fetch JSON data and populate the table
+        let currentPage = 1;
+        let rowsPerPage = 25;
+        let data = [];
+
         async function fetchData() {
             try {
                 const response = await fetch('https://script.google.com/macros/s/AKfycbxR3z8AJsY8aYayYi6hG41uJas-Jgw1-zT5m9ZVvEn9A-M2QD5dO6YAjBPAjH_fqWsOvQ/exec');
-                const data = await response.json();
+                data = await response.json();
                 
-                const tableBody = document.querySelector('#data-table tbody');
-                
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    
-                    row.innerHTML = `
-                        <td>${item.Timestamp}</td>
-                        <td>${item['Registration Number']}</td>
-                        <td>${item['Symbol Number']}</td>
-                        <td>${item['Student Name']}</td>
-                        <td>${item.Class}</td>
-                        <td>${item['Passed Year']}</td>
-                        <td>${item['Starting Date']}</td>
-                        <td>${item['Ending Date']}</td>
-                        <td>${item.Duration}</td>
-                        <td>${item.Remarks}</td>
-                    `;
-                    
-                    tableBody.appendChild(row);
-                });
+                renderTable();
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
+        }
+
+        function renderTable() {
+            const tableBody = document.querySelector('#data-table tbody');
+            tableBody.innerHTML = '';
+            
+            const startIndex = (currentPage - 1) * (rowsPerPage === "all" ? data.length : rowsPerPage);
+            const endIndex = rowsPerPage === "all" ? data.length : startIndex + Number(rowsPerPage);
+            const rows = data.slice(startIndex, endIndex);
+
+            rows.forEach(item => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${item['Registration Number']}</td>
+                    <td>${item['Symbol Number']}</td>
+                    <td>${item['Student Name']}</td>
+                    <td>${item.Class}</td>
+                    <td>${item['Passed Year']}</td>
+                    <td>${item['Starting Date']}</td>
+                    <td>${item['Ending Date']}</td>
+                    <td>${item.Duration}</td>
+                    <td>${item.Remarks}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+
+            // Update the current page number display
+            document.getElementById('current-page').innerText = currentPage;
         }
 
         // Call the function to fetch and display data
@@ -141,7 +198,7 @@
             tr = table.getElementsByTagName("tr");
 
             for (i = 1; i < tr.length; i++) { // Start from 1 to skip header row
-                td = tr[i].getElementsByTagName("td")[3]; // Search in the "Student Name" column
+                td = tr[i].getElementsByTagName("td")[2]; // Search in the "Student Name" column
                 if (td) {
                     txtValue = td.textContent || td.innerText;
                     if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -151,6 +208,31 @@
                     }
                 }
             }
+        }
+
+        // Filter rows based on the selected number of rows
+        function filterRows() {
+            rowsPerPage = document.getElementById("rowFilter").value;
+            currentPage = 1;
+            renderTable();
+        }
+
+        function nextPage() {
+            if ((currentPage * rowsPerPage < data.length) || (rowsPerPage === "all")) {
+                currentPage++;
+                renderTable();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        }
+
+        function pdf() {
+            window.print();
         }
     </script>
 </body>
