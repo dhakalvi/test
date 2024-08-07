@@ -1,0 +1,85 @@
+@import https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css;
+@import https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css;
+
+body {
+            background-color: rgb(243, 220, 220);
+        }
+        #header {
+            text-align: center;
+            margin: 10px 0;
+        }
+        #main {
+            margin: 10px;
+        }
+        .foot {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-size: 16px;
+            margin: 10px;
+        }
+        #foot {
+            text-align: center;
+            margin: 10px 0;
+        }
+        #foot a {
+            text-decoration: none;
+            color: #000;
+        }
+        #foot a:hover {
+            text-decoration: none;
+            color: #ff0f0f;
+        }
+        #fimg {
+            height: 20px;
+            border: none;
+            border-radius: 3px;
+        }
+        #sbox {
+            width: 200px;
+            border: none;
+            height: 35px;
+            box-shadow: 5px 5px 5px 3px #aaaaaa;
+            background-color: white;
+            border-radius: 5px;
+        }
+        #sbox:hover {
+            border-color: #f50606;
+        }
+        #search {
+            margin: 10px;
+        }
+        .flex-container {
+            display: flex;
+            justify-content: space-between; /* Adjusted for space between search and filter */
+            padding: 10px;
+        }
+        @media print {
+            input {
+                visibility: hidden;
+            }
+            #foot {
+                visibility: hidden;
+            }
+            body {
+                background-color: white;
+            }
+            button {
+                visibility: hidden;
+            }
+        }
+        .btn {
+            margin-left: 20px;
+        }
+        #foot p {
+            height: 3px;
+        }
+        table {
+            margin: 10px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .page-number {
+            margin: 0 10px;
+        }
