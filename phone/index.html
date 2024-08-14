@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Book</title>
+ <link rel="icon" type="image/x-icon" href="ico.ico">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .contact-photo {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dropdown-menu {
+            min-width: auto;
+        }
+  #fimg {
+            height: 20px;
+            border: none;
+            border-radius: 3px;
+        }
+ .foot {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            font-size: 16px;
+            margin: 10px;
+        }
+        #foot {
+            text-align: center;
+            margin: 10px 0;
+        }
+        #foot a {
+            text-decoration: none;
+            color: #000;
+        }
+        #foot a:hover {
+            text-decoration: none;
+            color: #ff0f0f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mt-5"> <i class="fa fa-address-book" aria-hidden="true"></i> Phone Book</h1>
+
+        <!-- Dashboard -->
+        <div class="card my-4">
+            <div class="card-body text-center">
+                <h3>Total Contacts: <span id="totalContacts">0</span></h3>
+                <button class="btn btn-success my-2" data-toggle="collapse" data-target="#addContactForm"><i class="fas fa-user-plus"></i> Add New Contact</button>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="input-group mb-3">
+            <input type="text" id="searchBar" class="form-control" placeholder="Search contacts by name...">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+            </div>
+        </div>
+
+        <!-- Add/Edit Contact Form -->
+        <div id="addContactForm" class="collapse">
+            <div class="card my-4">
+                <div class="card-body">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" placeholder="Enter name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" class="form-control" id="phone" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="photo">Photo (Optional)</label>
+                            <input type="file" class="form-control-file" id="photo" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact List -->
+        <div class="card">
+            <div class="card-body">
+                <ul class="list-group" id="contactList">
+                    <!-- Contacts will be dynamically inserted here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+<div class="foot" style="
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center; 
+    padding: 20px; 
+    background-color: #f1f1f1; 
+    border-top: 1px solid #ddd;
+">
+    <p style="margin: 5px 0; line-height: 1.2;">Copyright © 2081 (2024) - All Rights Reserved</p>
+    <p style="margin: 5px 0; line-height: 1.2;"><i class="fa-solid fa-square-envelope"></i> <a href="mailto:dhakalvi@gmail.com">dhakalvi@gmail.com</a></p>
+    <p style="margin: 5px 0; line-height: 1.2;"><i class="fas fa-phone-square-alt"></i> <a href="tel:+9779867026254">9867026254</a></p>
+    <p style="margin: 5px 0; line-height: 1.2;">Designed & Developed By <a href="https://www.shivanp.com.np" style="display: ; align-items: center;"><img id="fimg" src="https://blogger.googleusercontent.com/img/a/AVvXsEhfAuj90QIslIgStNt2wCZ5gODTqRimRdFcz7Rk10kXHoD82bt4mdNJRc1F7GzY7x68Lr8DzMVZMnxuBfbX-ms4JGMDj1KucHN6rLPlTQxxn5oPaY9E0ITTC4B9lTY_bTGVwSBwxRQWY-1u796kHYkgT_k128E6CBo2xNdWFQ5xEA9xV8T1n4m6TYInrlPK=s1600" alt="Shiva Prasad Dhakal" style="margin-right: 10px;"> Shiva Prasad Dhakal</a></p>
+</div>
+
+
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <!-- Popper.js v1 -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactForm = document.getElementById('contactForm');
+            const contactList = document.getElementById('contactList');
+            const totalContacts = document.getElementById('totalContacts');
+            const searchBar = document.getElementById('searchBar');
+            let contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+            let editIndex = null;
+
+            // Function to render contacts list
+            function renderContacts(filter = '') {
+                contactList.innerHTML = '';
+                const filteredContacts = contacts.filter(contact => 
+                    contact.name.toLowerCase().includes(filter.toLowerCase())
+                );
+                filteredContacts.forEach((contact, index) => {
+                    contactList.innerHTML += `
+                        <li class="list-group-item">
+                            <div class="d-flex align-items-center">
+                                <img src="${contact.photo || 'https://via.placeholder.com/50'}" alt="Photo" class="contact-photo mr-3">
+                                <div>
+                                    <strong>${contact.name}</strong><br>
+                                    <small>${contact.phone}</small>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-light" type="button" id="dropdownMenuButton${index}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton${index}">
+                                    <button class="dropdown-item" onclick="editContact(${index})"><i class="fas fa-edit"></i> Edit</button>
+                                    <button class="dropdown-item text-danger" onclick="deleteContact(${index})"><i class="fas fa-trash-alt"></i> Delete</button>
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                });
+                totalContacts.textContent = filteredContacts.length;
+            }
+
+            // Function to handle the file input and convert to base64
+            function getBase64(file, callback) {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => callback(reader.result);
+                reader.onerror = error => console.log('Error: ', error);
+            }
+
+            // Function to add or edit a contact
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.trim();
+                const photoInput = document.getElementById('photo');
+                
+                // Handle photo upload
+                if (photoInput.files.length > 0) {
+                    getBase64(photoInput.files[0], (base64Photo) => {
+                        saveContact(name, phone, base64Photo);
+                    });
+                } else {
+                    saveContact(name, phone, null);
+                }
+            });
+
+            // Save or update contact in local storage
+            function saveContact(name, phone, photo) {
+                if (editIndex === null) {
+                    contacts.push({ name, phone, photo });
+                } else {
+                    contacts[editIndex] = { name, phone, photo: photo || contacts[editIndex].photo };
+                    editIndex = null;
+                }
+
+                localStorage.setItem('contacts', JSON.stringify(contacts));
+                contactForm.reset();
+                $('#addContactForm').collapse('hide');
+                renderContacts(searchBar.value);
+            }
+
+            // Function to edit a contact
+            window.editContact = (index) => {
+                editIndex = index;
+                const contact = contacts[index];
+                document.getElementById('name').value = contact.name;
+                document.getElementById('phone').value = contact.phone;
+                $('#addContactForm').collapse('show');
+            }
+
+            // Function to delete a contact
+            window.deleteContact = (index) => {
+                if (confirm('Are you sure you want to delete this contact?')) {
+                    contacts.splice(index, 1);
+                    localStorage.setItem('contacts', JSON.stringify(contacts));
+                    renderContacts(searchBar.value);
+                }
+            }
+
+            // Event listener for search bar
+            searchBar.addEventListener('input', () => {
+                renderContacts(searchBar.value);
+            });
+
+            // Initial render of contacts
+            renderContacts();
+        });
+    </script>
+</body>
+</html>
